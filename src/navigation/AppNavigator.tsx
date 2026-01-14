@@ -2,7 +2,7 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../hooks/useAuth";
 import Colors from "../constants/Colors";
@@ -90,21 +90,71 @@ const UserTabs = () => {
   );
 };
 
-const AdminStack = () => (
-  <Stack.Navigator>
-    <Stack.Screen
-      name="ListaConsultas"
-      component={AdminListScreen}
-      options={{ title: "Panel Admin" }}
-    />
-    <Stack.Screen
-      name="DetalleConsulta"
-      component={AdminDetailScreen}
-      options={{ title: "Detalle de Mensaje" }}
-    />
-  </Stack.Navigator>
-);
+const AdminStack = () => {
+  const { logout } = useAuth(); 
 
+  const handleConfirmLogout = () => {
+    Alert.alert(
+      "Cerrar Sesión",
+      "¿Está seguro que desea salir del panel de administración?",
+      [
+        {
+          text: "Cancelar",
+          style: "cancel"
+        },
+        { 
+          text: "Cerrar Sesión", 
+          onPress: () => logout(),
+          style: "destructive"
+        }
+      ]
+    );
+  };
+
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: true,
+        headerStyle: {
+          backgroundColor: Colors.white,
+          elevation: 0,
+          shadowOpacity: 0,
+          borderBottomWidth: 1,
+          borderBottomColor: Colors.border,
+          height: 100,
+        },
+        headerTitleStyle: {
+          fontWeight: '800',
+          fontSize: 22,
+          color: Colors.primary,
+        },
+        headerTitleAlign: 'center',
+        headerTintColor: Colors.primary,
+      }}
+    >
+      <Stack.Screen 
+        name="ListaConsultas" 
+        component={AdminListScreen} 
+        options={{ 
+          title: "Panel Admin",
+          headerRight: () => (
+            <TouchableOpacity 
+              onPress={handleConfirmLogout} 
+              style={{ marginRight: 20 }}
+            >
+              <Ionicons name="log-out-outline" size={28} color={Colors.primary} />
+            </TouchableOpacity>
+          )
+        }} 
+      />
+      <Stack.Screen 
+        name="DetalleConsulta" 
+        component={AdminDetailScreen} 
+        options={{ title: "Detalle de Mensaje" }} 
+      />
+    </Stack.Navigator>
+  );
+};
 export const AppNavigator = () => {
   const { role, isLoggedIn } = useAuth();
 
