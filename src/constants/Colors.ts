@@ -1,14 +1,15 @@
 const Colors = {
-  primary: '#1E3A8A',   
-  secondary: '#3B82F6', 
-  tertiary: '#93C5FD', 
-  background: '#F8FAFC',
+  primary: '#002E5D',
+  secondary: '#1565C0', 
+  tertiary: '#E3F2FD',
+  background: '#F1F5F9',
   white: '#FFFFFF',
-  black: '#0F172A',   
-  gray: '#64748B',   
-  success: '#10B981',   
-  error: '#EF4444',     
-  border: '#E2E8F0',     
+  pastel: '#F8FAFC',   
+  black: '#0F172A',
+  gray: '#475569',      
+  border: '#CBD5E1',    
+  success: '#059669', 
+  error: '#DC2626',    
 };
 
 export default Colors;

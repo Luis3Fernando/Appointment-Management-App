@@ -10,16 +10,36 @@ import RepositoryScreen from '../screens/RepositoryScreen';
 import LoginScreen from '../screens/LoginScreen';
 import AdminListScreen from '../screens/AdminListScreen';
 import AdminDetailScreen from '../screens/AdminDetailScreen';
+import { TouchableOpacity, Text } from 'react-native';
+import Colors from '../constants/Colors';
+import { Ionicons } from '@expo/vector-icons';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-const UserTabs = () => (
-  <Tab.Navigator screenOptions={{ headerShown: true }}>
-    <Tab.Screen name="Formulario" component={UserFormScreen} options={{ title: 'Enviar Datos' }} />
-    <Tab.Screen name="Repositorio" component={RepositoryScreen} options={{ title: 'Documentos' }} />
-  </Tab.Navigator>
-);
+const UserTabs = () => {
+  const { logout } = useAuth(); 
+
+  return (
+    <Tab.Navigator 
+      screenOptions={{ 
+        headerShown: true,
+        headerLeft: () => (
+          <TouchableOpacity 
+            onPress={logout} 
+            style={{ marginLeft: 15, flexDirection: 'row', alignItems: 'center' }}
+          >
+            <Ionicons name="arrow-back" size={24} color={Colors.primary} />
+            <Text style={{ color: Colors.primary, marginLeft: 5, fontWeight: '600' }}>Volver</Text>
+          </TouchableOpacity>
+        )
+      }}
+    >
+      <Tab.Screen name="Formulario" component={UserFormScreen} options={{ title: 'Enviar Datos' }} />
+      <Tab.Screen name="Repositorio" component={RepositoryScreen} options={{ title: 'Documentos' }} />
+    </Tab.Navigator>
+  );
+};
 
 const AdminStack = () => (
   <Stack.Navigator>
