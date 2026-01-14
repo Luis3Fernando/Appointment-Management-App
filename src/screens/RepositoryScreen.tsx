@@ -42,17 +42,15 @@ const RepositoryScreen = () => {
         <Text style={styles.docSubtitle}>{item.type} • Tocar para abrir</Text>
       </View>
 
-      <Ionicons name="chevron-forward" size={20} color={Colors.border} />
+      <Ionicons name="chevron-forward" size={20} color={Colors.primary} />
     </TouchableOpacity>
   );
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Repositorio Digital</Text>
         <Text style={styles.subtitle}>Documentación y enlaces de interés.</Text>
       </View>
-
       <FlatList
         data={DOCS}
         keyExtractor={(item) => item.id}
@@ -66,29 +64,24 @@ const RepositoryScreen = () => {
 export default RepositoryScreen;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
-  header: { padding: 25, backgroundColor: Colors.white, borderBottomWidth: 1, borderBottomColor: Colors.border },
+  container: { flex: 1, backgroundColor: Colors.white },
+  header: { padding: 10, backgroundColor: Colors.white},
   title: { fontSize: 24, fontWeight: '800', color: Colors.primary },
   subtitle: { fontSize: 14, color: Colors.gray, marginTop: 4 },
   listContent: { padding: 20 },
   card: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.tertiary,
     padding: 18,
     borderRadius: 15,
     marginBottom: 12,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 5,
   },
   iconContainer: {
     width: 50,
     height: 50,
     borderRadius: 12,
-    backgroundColor: Colors.tertiary, // El azul bajito que definimos
+    backgroundColor: Colors.white, 
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 15,

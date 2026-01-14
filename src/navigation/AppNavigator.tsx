@@ -74,7 +74,7 @@ const UserTabs = () => {
         name="Principal"
         component={UserFormScreen}
         options={{
-          title: "Registro de Datos",
+          title: "Enviar consulta",
           tabBarLabel: "Principal",
         }}
       />
