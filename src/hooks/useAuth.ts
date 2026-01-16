@@ -7,7 +7,9 @@ const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 export const useAuth = () => {
   const dispatch = useAppDispatch();
+
   const { role, isLoggedIn } = useAppSelector((state) => state.auth);
+
   const loginAsAdmin = () => {
     dispatch(setUserRole('admin'));
   };
@@ -23,7 +25,7 @@ export const useAuth = () => {
   return {
     role,
     isLoggedIn,
-    isAdmin: role === 'admin',
+    isAdmin: role === 'admin' && isLoggedIn,
     isUser: role === 'user',
     loginAsAdmin,
     loginAsUser,

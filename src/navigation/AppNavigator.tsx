@@ -19,6 +19,17 @@ const Tab = createBottomTabNavigator();
 const UserTabs = () => {
   const { logout } = useAuth();
 
+  const handleConfirmLogout = () => {
+    Alert.alert("Salir", "¿Desea volver a la pantalla de inicio?", [
+      { text: "Cancelar", style: "cancel" },
+      {
+        text: "Confirmar",
+        onPress: () => logout(),
+        style: "destructive",
+      },
+    ]);
+  };
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -38,7 +49,10 @@ const UserTabs = () => {
         },
         headerTitleAlign: "center",
         headerLeft: () => (
-          <TouchableOpacity onPress={logout} style={{ marginLeft: 20 }}>
+          <TouchableOpacity 
+            onPress={handleConfirmLogout}
+            style={{ marginLeft: 20 }}
+          >
             <Ionicons name="chevron-back" size={30} color={Colors.primary} />
           </TouchableOpacity>
         ),
@@ -91,7 +105,7 @@ const UserTabs = () => {
 };
 
 const AdminStack = () => {
-  const { logout } = useAuth(); 
+  const { logout } = useAuth();
 
   const handleConfirmLogout = () => {
     Alert.alert(
@@ -100,13 +114,13 @@ const AdminStack = () => {
       [
         {
           text: "Cancelar",
-          style: "cancel"
+          style: "cancel",
         },
-        { 
-          text: "Cerrar Sesión", 
+        {
+          text: "Cerrar Sesión",
           onPress: () => logout(),
-          style: "destructive"
-        }
+          style: "destructive",
+        },
       ]
     );
   };
@@ -124,33 +138,37 @@ const AdminStack = () => {
           height: 100,
         },
         headerTitleStyle: {
-          fontWeight: '800',
+          fontWeight: "800",
           fontSize: 22,
           color: Colors.primary,
         },
-        headerTitleAlign: 'center',
+        headerTitleAlign: "center",
         headerTintColor: Colors.primary,
       }}
     >
-      <Stack.Screen 
-        name="ListaConsultas" 
-        component={AdminListScreen} 
-        options={{ 
+      <Stack.Screen
+        name="ListaConsultas"
+        component={AdminListScreen}
+        options={{
           title: "Panel Admin",
           headerRight: () => (
-            <TouchableOpacity 
-              onPress={handleConfirmLogout} 
+            <TouchableOpacity
+              onPress={handleConfirmLogout}
               style={{ marginRight: 20 }}
             >
-              <Ionicons name="log-out-outline" size={28} color={Colors.primary} />
+              <Ionicons
+                name="log-out-outline"
+                size={28}
+                color={Colors.primary}
+              />
             </TouchableOpacity>
-          )
-        }} 
+          ),
+        }}
       />
-      <Stack.Screen 
-        name="DetalleConsulta" 
-        component={AdminDetailScreen} 
-        options={{ title: "Detalle de Mensaje" }} 
+      <Stack.Screen
+        name="DetalleConsulta"
+        component={AdminDetailScreen}
+        options={{ title: "Detalle de Mensaje" }}
       />
     </Stack.Navigator>
   );

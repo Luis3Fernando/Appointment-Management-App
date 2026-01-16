@@ -16,8 +16,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "../constants/Colors";
 import { useAuth } from "../hooks/useAuth";
-
-const { width } = Dimensions.get("window");
+import { ADMIN_CREDENTIALS } from "../constants/Config";
 
 const LoginScreen = () => {
   const { loginAsAdmin } = useAuth();
@@ -28,10 +27,13 @@ const LoginScreen = () => {
   const [errorModal, setErrorModal] = useState({ visible: false, message: "" });
 
   const handleLogin = () => {
-    if (!user.trim() || !password.trim()) {
+    const cleanUser = user.trim();
+    const cleanPass = password.trim();
+
+    if (!cleanUser || !cleanPass) {
       setErrorModal({
         visible: true,
-        message: "Por favor, ingrese sus credenciales.",
+        message: "Por favor, complete todos los campos.",
       });
       return;
     }
@@ -39,13 +41,15 @@ const LoginScreen = () => {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      if (user === "Admin" && password === "Consultoria000") {
+      if (cleanUser === ADMIN_CREDENTIALS.user && cleanPass === ADMIN_CREDENTIALS.password) {
         loginAsAdmin();
       } else {
         setErrorModal({
           visible: true,
-          message: "Usuario o contraseña incorrectos.",
+          message:
+            "Las credenciales ingresadas no son válidas. Intente nuevamente.",
         });
+        setPassword("");
       }
     }, 1500);
   };
