@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -6,106 +6,53 @@ import {
   FlatList,
   TouchableOpacity,
   SafeAreaView,
+  ActivityIndicator,
+  RefreshControl,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import Colors from "../constants/Colors";
-const DATA_MOCK = [
-  {
-    id: "1",
-    nombres: "Juan",
-    apellidos: "Pérez",
-    correo: "juan@mail.com",
-    area: "Sistemas",
-    fecha: "12/01/2026",
-    tematica: "Falla de Red",
-  },
-  {
-    id: "2",
-    nombres: "Maria",
-    apellidos: "Lopez",
-    correo: "m.lopez@mail.com",
-    area: "Recursos Humanos",
-    fecha: "13/01/2026",
-    tematica: "Duda Planilla",
-  },
-  {
-    id: "3",
-    nombres: "Carlos",
-    apellidos: "Ruiz",
-    correo: "cruiz@mail.com",
-    area: "Administración",
-    fecha: "13/01/2026",
-    tematica: "Pedido de Insumos",
-  },
-  {
-    id: "4",
-    nombres: "Ana",
-    apellidos: "Soto",
-    correo: "asoto@mail.com",
-    area: "Sistemas",
-    fecha: "10/01/2026",
-    tematica: "Acceso ERP",
-  },
-  {
-    id: "5",
-    nombres: "Luis",
-    apellidos: "Gomez",
-    correo: "lgomez@mail.com",
-    area: "Ventas",
-    fecha: "09/01/2026",
-    tematica: "Comisiones",
-  },
-];
+import { useAppointments } from "../hooks/useAppointments";
 
-const AREAS = [
-  "Todos",
-  "Sistemas",
-  "Recursos Humanos",
-  "Administración",
-  "Ventas",
-];
+const AREAS = ["Todos", "Sistemas", "Electronica", "Arquitectura", "Recursos Humanos"];
 
 const AdminListScreen = () => {
   const navigation = useNavigation<any>();
   const [filter, setFilter] = useState("Todos");
+  const { data, loading, error, fetchAppointments } = useAppointments();
 
-  const filteredData = useMemo(() => {
-    if (filter === "Todos") return DATA_MOCK;
-    return DATA_MOCK.filter((item) => item.area === filter);
+  useEffect(() => {
+    fetchAppointments(filter);
   }, [filter]);
+
+  const formatDate = (isoString: string) => {
+    if (!isoString) return "";
+    const date = new Date(isoString);
+    return date.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  };
 
   const renderItem = ({ item }: any) => (
     <View style={styles.card}>
       <View style={styles.cardInfo}>
         <View style={styles.row}>
-          <Text style={styles.userName}>
+          <Text style={styles.userName} numberOfLines={1}>
             {item.nombres} {item.apellidos}
           </Text>
           <View style={styles.areaBadge}>
             <Text style={styles.areaBadgeText}>{item.area}</Text>
           </View>
         </View>
-
         <Text style={styles.userMail}>{item.correo}</Text>
-
         <View style={styles.dateRow}>
           <Ionicons name="calendar-outline" size={14} color={Colors.gray} />
-          <Text style={styles.dateText}>{item.fecha}</Text>
+          <Text style={styles.dateText}>{formatDate(item.fechaCreacion)}</Text>
         </View>
       </View>
-
       <TouchableOpacity
         style={styles.detailButton}
-        onPress={() =>
-          navigation.navigate("DetalleConsulta", { consulta: item })
-        }
+        onPress={() => navigation.navigate("DetalleConsulta", { consulta: item })}
       >
-        <Ionicons
-          name="chevron-forward-circle"
-          size={35}
-          color={Colors.secondary}
-        />
+        <Ionicons name="chevron-forward-circle" size={35} color={Colors.secondary} />
       </TouchableOpacity>
     </View>
   );
@@ -122,36 +69,46 @@ const AdminListScreen = () => {
           contentContainerStyle={styles.filterList}
           renderItem={({ item }) => (
             <TouchableOpacity
-              style={[
-                styles.filterPill,
-                filter === item && styles.filterPillActive,
-              ]}
+              style={[styles.filterPill, filter === item && styles.filterPillActive]}
               onPress={() => setFilter(item)}
             >
-              <Text
-                style={[
-                  styles.filterPillText,
-                  filter === item && styles.filterPillTextActive,
-                ]}
-              >
+              <Text style={[styles.filterPillText, filter === item && styles.filterPillTextActive]}>
                 {item}
               </Text>
             </TouchableOpacity>
           )}
         />
       </View>
-      <FlatList
-        data={filteredData}
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-        contentContainerStyle={styles.listContainer}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Ionicons name="search-outline" size={50} color={Colors.border} />
-            <Text style={styles.emptyText}>No hay consultas en esta área.</Text>
-          </View>
-        }
-      />
+      {loading && data.length === 0 ? (
+        <View style={styles.centerContainer}>
+          <ActivityIndicator size="large" color={Colors.primary} />
+          <Text style={styles.loadingText}>Sincronizando consultas...</Text>
+        </View>
+      ) : error ? (
+        <View style={styles.centerContainer}>
+          <Ionicons name="cloud-offline-outline" size={50} color={Colors.error} />
+          <Text style={styles.errorText}>{error}</Text>
+          <TouchableOpacity style={styles.retryButton} onPress={() => fetchAppointments(filter)}>
+            <Text style={styles.retryText}>Reintentar</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <FlatList
+          data={data}
+         keyExtractor={(item, index) => item.id?.toString() ?? index.toString()}
+          renderItem={renderItem}
+          contentContainerStyle={styles.listContainer}
+          refreshControl={
+            <RefreshControl refreshing={loading} onRefresh={() => fetchAppointments(filter)} />
+          }
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Ionicons name="documents-outline" size={50} color={Colors.border} />
+              <Text style={styles.emptyText}>No hay consultas registradas.</Text>
+            </View>
+          }
+        />
+      )}
     </SafeAreaView>
   );
 };
@@ -160,6 +117,11 @@ export default AdminListScreen;
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
+  centerContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 },
+  loadingText: { marginTop: 10, color: Colors.primary, fontWeight: '600' },
+  errorText: { color: Colors.error, textAlign: 'center', marginTop: 10, fontSize: 16 },
+  retryButton: { marginTop: 20, backgroundColor: Colors.primary, paddingHorizontal: 25, paddingVertical: 10, borderRadius: 10 },
+  retryText: { color: Colors.white, fontWeight: '700' },
   filterSection: {
     backgroundColor: Colors.white,
     paddingVertical: 15,
@@ -218,7 +180,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   areaBadgeText: {
-    fontSize: 10,
+    fontSize: 8,
     fontWeight: "700",
     color: Colors.primary,
     textTransform: "uppercase",
