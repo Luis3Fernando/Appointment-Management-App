@@ -4,5 +4,5 @@ export const ADMIN_CREDENTIALS = {
 };
 
 export const API_CONFIG = {
-  baseUrl: "https://api.tuconsultoria.com",
+  baseUrl: "http://consultas-app.sysari.net/api/v1/appointments/",
 };
