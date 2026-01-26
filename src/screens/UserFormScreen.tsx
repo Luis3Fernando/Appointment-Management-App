@@ -17,6 +17,8 @@ import { Ionicons } from "@expo/vector-icons";
 import Colors from "../constants/Colors";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
+import { useAppointments } from "../hooks/useAppointments";
+import { Appointment } from "../services/appointmentService";
 
 const InputField = ({
   label,
@@ -26,6 +28,7 @@ const InputField = ({
   handleChange,
   placeholder,
   multiline = false,
+  keyboardType = "default",
 }: any) => (
   <View style={styles.inputGroup}>
     <Text style={styles.label}>{label}</Text>
@@ -45,6 +48,7 @@ const InputField = ({
         onChangeText={(text) => handleChange(name, text)}
         multiline={multiline}
         placeholderTextColor="#94A3B8"
+        keyboardType={keyboardType}
       />
     </View>
   </View>
@@ -72,9 +76,9 @@ const SelectField = ({ label, icon, name, value, openSelector }: any) => (
 
 const UserFormScreen = () => {
   const { role, isLoggedIn } = useSelector(
-    (state: RootState) => state.auth || { role: null, isLoggedIn: false }
+    (state: RootState) => state.auth || { role: null, isLoggedIn: false },
   );
-  const [loading, setLoading] = useState(false);
+  const { createNewAppointment, loading: apiLoading } = useAppointments();
   const [formData, setFormData] = useState({
     nombres: "",
     apellidos: "",
@@ -89,12 +93,11 @@ const UserFormScreen = () => {
   });
   const [modalVisible, setModalVisible] = useState(false);
   const [activeField, setActiveField] = useState<keyof typeof formData | null>(
-    null
+    null,
   );
 
   const options = {
     genero: ["Masculino", "Femenino", "Otro", "Prefiero no decirlo"],
-    edad: ["18-25", "26-35", "36-45", "46-60", "60+"],
     area: ["Sistemas", "Recursos Humanos", "Administración", "Ventas"],
     entidad: ["Entidad Pública", "Empresa Privada", "ONG", "Particular"],
     tipoConsulta: ["Reclamo", "Sugerencia", "Información", "Otros"],
@@ -102,7 +105,12 @@ const UserFormScreen = () => {
   };
 
   const handleChange = (name: string, value: string) => {
-    setFormData({ ...formData, [name]: value });
+    if (name === "edad") {
+      const cleanValue = value.replace(/[^0-9]/g, "");
+      setFormData({ ...formData, [name]: cleanValue });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleSelectOption = (option: string) => {
@@ -125,32 +133,54 @@ const UserFormScreen = () => {
 
   const handleSubmit = async () => {
     if (!validate()) {
-      Alert.alert("Error", "Por favor, rellene todos los campos obligatorios.");
+      Alert.alert(
+        "Campos Incompletos",
+        "Por favor, rellene todos los campos obligatorios.",
+      );
       return;
     }
 
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      Alert.alert("Éxito", "Su consulta ha sido enviada correctamente.", [
-        {
-          text: "OK",
-          onPress: () =>
-            setFormData({
-              nombres: "",
-              apellidos: "",
-              correo: "",
-              edad: "",
-              genero: "",
-              area: "",
-              entidad: "",
-              tipoConsulta: "",
-              tematica: "",
-              descripcion: "",
-            }),
-        },
-      ]);
-    }, 2000);
+    const edadNum = parseInt(formData.edad, 10);
+
+    if (isNaN(edadNum) || edadNum < 18 || edadNum > 70) {
+      Alert.alert(
+        "Edad no válida",
+        "El sistema solo admite solicitudes de personas entre 18 y 70 años.",
+      );
+      return;
+    }
+
+    const result = await createNewAppointment(formData as Appointment);
+
+    if (result.success) {
+      Alert.alert(
+        "¡Envío Exitoso!",
+        "Su consulta ha sido procesada correctamente en nuestro sistema.",
+        [
+          {
+            text: "Excelente",
+            onPress: () =>
+              setFormData({
+                nombres: "",
+                apellidos: "",
+                correo: "",
+                edad: "",
+                genero: "",
+                area: "",
+                entidad: "",
+                tipoConsulta: "",
+                tematica: "",
+                descripcion: "",
+              }),
+          },
+        ],
+      );
+    } else {
+      Alert.alert(
+        "Error de Conexión",
+        result.message || "No se pudo sincronizar con el servidor.",
+      );
+    }
   };
 
   return (
@@ -199,12 +229,14 @@ const UserFormScreen = () => {
             value={formData.genero}
             openSelector={openSelector}
           />
-          <SelectField
+          <InputField
             label="Edad"
             icon="calendar-outline"
             name="edad"
-            value={formData.edad}
-            openSelector={openSelector}
+            placeholder="Ej. 25"
+            formData={formData}
+            handleChange={handleChange}
+            keyboardType="numeric"
           />
           <SelectField
             label="Área"
@@ -243,13 +275,15 @@ const UserFormScreen = () => {
             formData={formData}
             handleChange={handleChange}
           />
-
           <TouchableOpacity
-            style={[styles.submitButton, !validate() && styles.disabledButton]}
+            style={[
+              styles.submitButton,
+              (!validate() || apiLoading) && styles.disabledButton,
+            ]}
             onPress={handleSubmit}
-            disabled={loading}
+            disabled={apiLoading}
           >
-            {loading ? (
+            {apiLoading ? (
               <ActivityIndicator color={Colors.white} />
             ) : (
               <Text style={styles.submitText}>Enviar Formulario</Text>
