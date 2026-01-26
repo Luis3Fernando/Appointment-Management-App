@@ -10,8 +10,15 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "../constants/Colors";
+import { Appointment } from "../services/appointmentService";
+import { RouteProp, useRoute } from "@react-navigation/native";
 
-const AdminDetailScreen = ({ route }: any) => {
+type RootStackParamList = {
+  DetalleConsulta: { consulta: Appointment };
+};
+
+const AdminDetailScreen = () => {
+  const route = useRoute<RouteProp<RootStackParamList, 'DetalleConsulta'>>();
   const { consulta } = route.params;
 
   const handleReply = () => {
@@ -97,14 +104,14 @@ const AdminDetailScreen = ({ route }: any) => {
           />
         </View>
         <View style={styles.messageCard}>
-          <Text style={styles.sectionTitle}>Descripción / Mensaje</Text>
+          <Text style={styles.sectionTitle}>Descripción</Text>
           <View style={styles.messageContent}>
             <Text style={styles.messageText}>{consulta.descripcion}</Text>
           </View>
         </View>
         <TouchableOpacity style={styles.replyButton} onPress={handleReply}>
           <Ionicons name="mail-unread-outline" size={24} color={Colors.white} />
-          <Text style={styles.replyButtonText}>Responder vía Correo</Text>
+          <Text style={styles.replyButtonText}>Responder por correo</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
