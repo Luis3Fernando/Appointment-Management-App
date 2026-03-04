@@ -74,19 +74,36 @@ const SelectField = ({ label, icon, name, value, openSelector }: any) => (
   </View>
 );
 
+const initialFormState = {
+  entidad: "",
+  nombreCompleto: "",
+  cargo: "",
+  correo: "",
+  celular: "",
+  genero: "",
+  edad: "",
+  cui: "",
+  area: "",
+  tipoConsulta: "",
+  tematica: "",
+  descripcion: "",
+};
+
 const UserFormScreen = () => {
   const { role, isLoggedIn } = useSelector(
     (state: RootState) => state.auth || { role: null, isLoggedIn: false },
   );
   const { createNewAppointment, loading: apiLoading } = useAppointments();
   const [formData, setFormData] = useState({
-    nombres: "",
-    apellidos: "",
-    correo: "",
-    edad: "",
-    genero: "",
-    area: "",
     entidad: "",
+    nombreCompleto: "",
+    cargo: "",
+    correo: "",
+    celular: "",
+    genero: "",
+    edad: "",
+    cui: "",
+    area: "",
     tipoConsulta: "",
     tematica: "",
     descripcion: "",
@@ -127,6 +144,10 @@ const UserFormScreen = () => {
     ],
   };
 
+  const resetForm = () => {
+    setFormData(initialFormState);
+  };
+
   const handleChange = (name: string, value: string) => {
     if (name === "edad") {
       const cleanValue = value.replace(/[^0-9]/g, "");
@@ -156,53 +177,40 @@ const UserFormScreen = () => {
 
   const handleSubmit = async () => {
     if (!validate()) {
-      Alert.alert(
-        "Campos Incompletos",
-        "Por favor, rellene todos los campos obligatorios.",
-      );
+      Alert.alert("Campos Incompletos", "Por favor, rellene todos los campos.");
       return;
     }
 
-    const edadNum = parseInt(formData.edad, 10);
+    const nameParts = formData.nombreCompleto.trim().split(" ");
+    const nombres = nameParts[0] || "";
+    const apellidos = nameParts.slice(1).join(" ") || "---";
 
-    if (isNaN(edadNum) || edadNum < 18 || edadNum > 70) {
-      Alert.alert(
-        "Edad no válida",
-        "El sistema solo admite solicitudes de personas entre 18 y 70 años.",
-      );
-      return;
-    }
+    const descripcionEnriquecida = `
+  [Cargo: ${formData.cargo}] 
+  [CUI: ${formData.cui}] 
+  [Celular: ${formData.celular}]
+  ---------------------------
+  ${formData.descripcion}`;
+    const apiPayload: Appointment = {
+      nombres: nombres,
+      apellidos: apellidos,
+      correo: formData.correo,
+      edad: parseInt(formData.edad, 10),
+      genero: formData.genero,
+      area: formData.area,
+      entidad: formData.entidad,
+      tipoConsulta: formData.tipoConsulta,
+      tematica: formData.tematica,
+      descripcion: descripcionEnriquecida,
+    };
 
-    const result = await createNewAppointment(formData as Appointment);
+    const result = await createNewAppointment(apiPayload);
 
     if (result.success) {
-      Alert.alert(
-        "¡Envío Exitoso!",
-        "Su consulta ha sido procesada correctamente en nuestro sistema.",
-        [
-          {
-            text: "Excelente",
-            onPress: () =>
-              setFormData({
-                nombres: "",
-                apellidos: "",
-                correo: "",
-                edad: "",
-                genero: "",
-                area: "",
-                entidad: "",
-                tipoConsulta: "",
-                tematica: "",
-                descripcion: "",
-              }),
-          },
-        ],
-      );
+      Alert.alert("¡Envío Exitoso!", "Su solicitud ha sido procesada.");
+      resetForm();
     } else {
-      Alert.alert(
-        "Error de Conexión",
-        result.message || "No se pudo sincronizar con el servidor.",
-      );
+      Alert.alert("Error", result.message);
     }
   };
 
@@ -231,12 +239,12 @@ const UserFormScreen = () => {
           <InputField
             label="Nombres y apellidos"
             icon="person-outline"
-            name="nombres"
-            placeholder="Nombres"
+            name="nombreCompleto"
+            placeholder="Nombres y apellidos"
             formData={formData}
             handleChange={handleChange}
           />
-         <InputField
+          <InputField
             label="Cargo"
             icon="person-outline"
             name="cargo"
