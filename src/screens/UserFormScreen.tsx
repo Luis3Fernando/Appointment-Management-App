@@ -245,12 +245,21 @@ const UserFormScreen = () => {
             handleChange={handleChange}
           />
           <InputField
-            label="Correo Electrónico"
+            label="Correo electrónico"
             icon="mail-outline"
             name="correo"
             placeholder="correo@ejemplo.com"
             formData={formData}
             handleChange={handleChange}
+          />
+          <InputField
+            label="Número de celular"
+            icon="call-outline"
+            name="celular"
+            placeholder="000"
+            formData={formData}
+            handleChange={handleChange}
+            keyboardType="numeric"
           />
           <SelectField
             label="Género"
@@ -268,13 +277,14 @@ const UserFormScreen = () => {
             handleChange={handleChange}
             keyboardType="numeric"
           />
-
-          <SelectField
+          <InputField
             label="Codigo Único de Inversión (CUI)"
-            icon="business-outline"
+            icon="keypad-outline"
             name="cui"
-            value={formData.area}
-            openSelector={openSelector}
+            placeholder="CUI"
+            formData={formData}
+            handleChange={handleChange}
+            keyboardType="numeric"
           />
           <SelectField
             label="Temática"
