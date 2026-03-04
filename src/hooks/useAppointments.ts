@@ -22,7 +22,7 @@ export const useAppointments = () => {
     setError(null);
     try {
       const response = await appointmentService.getAppointments(area);
-      setData(response);
+      setData(response.reverse());
     } catch (err: any) {
       setError(handleErrorMessage(err));
     } finally {
