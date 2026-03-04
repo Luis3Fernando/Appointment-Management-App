@@ -181,9 +181,20 @@ const UserFormScreen = () => {
       return;
     }
 
-    const nameParts = formData.nombreCompleto.trim().split(" ");
-    const nombres = nameParts[0] || "";
-    const apellidos = nameParts.slice(1).join(" ") || "---";
+    const nameParts = formData.nombreCompleto.trim().split(/\s+/);
+    let nombres = "";
+    let apellidos = "";
+
+    if (nameParts.length >= 4) {
+      nombres = nameParts.slice(0, 2).join(" ");
+      apellidos = nameParts.slice(2).join(" ");
+    } else if (nameParts.length === 3) {
+      nombres = nameParts[0];
+      apellidos = nameParts.slice(1).join(" "); 
+    } else {
+      nombres = nameParts[0] || "";
+      apellidos = nameParts.slice(1).join(" ") || "---";
+    }
 
     const descripcionEnriquecida = `
   [Cargo: ${formData.cargo}] 
