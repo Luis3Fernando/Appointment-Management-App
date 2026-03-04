@@ -88,7 +88,7 @@ const UserTabs = () => {
         name="Principal"
         component={UserFormScreen}
         options={{
-          title: "Enviar consulta",
+          title: "Enviar solicitud",
           tabBarLabel: "Principal",
         }}
       />

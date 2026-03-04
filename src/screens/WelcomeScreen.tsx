@@ -43,14 +43,14 @@ const WelcomeScreen = () => {
           <View style={styles.logoOuterRing}>
             <View style={styles.logoWrapper}>
               <Image
-                source={require("../../assets/logo-company.jpg")}
+                source={require("../assets/LOGO-01.jpg")}
                 style={styles.logo}
                 resizeMode="contain"
               />
             </View>
           </View>
           <Text style={styles.title}>Bienvenido</Text>
-          <Text style={styles.subtitle}>Sistema de gestión y consultas</Text>
+          <Text style={styles.subtitle}>Sistema de gestión y solicitudes</Text>
         </View>
         <View style={styles.bottomSection}>
           <Text style={styles.helperText}>Seleccione su método de acceso:</Text>
@@ -69,7 +69,7 @@ const WelcomeScreen = () => {
                 />
                 <View>
                   <Text style={[styles.buttonText, styles.buttonTextPrimary]}>
-                    Portal de Usuario
+                    Portal de usuario
                   </Text>
                 </View>
               </View>
@@ -87,7 +87,7 @@ const WelcomeScreen = () => {
                   style={styles.iconSpacingSmall}
                 />
                 <Text style={[styles.buttonText, styles.buttonTextOutline]}>
-                  Acceso Administrativo
+                  Acceso administrativo
                 </Text>
               </View>
             </TouchableOpacity>
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   logo: {
-    width: width * 0.4,
+    width: width * 0.7,
     height: width * 0.4,
   },
   title: {

@@ -11,10 +11,11 @@ import { Ionicons } from '@expo/vector-icons';
 import Colors from '../constants/Colors';
 
 const DOCS = [
-  { id: '1', title: 'Manual de Usuario V1', type: 'PDF', url: 'https://google.com' },
-  { id: '2', title: 'Normativa de Consultas 2025', type: 'Link', url: 'https://google.com' },
-  { id: '3', title: 'Guía de Áreas Internas', type: 'PDF', url: 'https://google.com' },
-  { id: '4', title: 'Preguntas Frecuentes', type: 'Link', url: 'https://google.com' },
+  { id: '1', title: 'Línea de tiempo', type: 'Link', url: 'https://google.com' },
+  { id: '2', title: 'Normatividad', type: 'Link', url: 'https://google.com' },
+  { id: '3', title: 'Comunicaciones', type: 'Link', url: 'https://google.com' },
+  { id: '4', title: 'Redes sociales', type: 'Link', url: 'https://google.com' },
+  { id: '5', title: 'Agenda de capacitaciones', type: 'Link', url: 'https://google.com' },
 ];
 
 const RepositoryScreen = () => {

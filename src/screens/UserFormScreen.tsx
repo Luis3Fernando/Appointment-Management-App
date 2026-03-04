@@ -97,11 +97,34 @@ const UserFormScreen = () => {
   );
 
   const options = {
-    genero: ["Masculino", "Femenino", "Otro", "Prefiero no decirlo"],
-    area: ["Sistemas", "Recursos Humanos", "Administración", "Ventas"],
-    entidad: ["Entidad Pública", "Empresa Privada", "ONG", "Particular"],
-    tipoConsulta: ["Reclamo", "Sugerencia", "Información", "Otros"],
-    tematica: ["Tecnología", "Laboral", "Legal", "Salud"],
+    genero: ["Masculino", "Femenino"],
+    area: ["Contrataciones", "Invierte", "Ejecución", "Presupuesto"],
+    entidad: [
+      "Municipalidad distrital de Progreso",
+      "Municipalidad distrital de Challhuahuacho",
+      "Municipalidad distrital de Colquemarca",
+      "Municipalidad distrital de Velille",
+      "Municipalidad distrital de Coporaque",
+      "Municipalidad distrital de Condoroma",
+      "Municipalidad distrital de Mara",
+      "Municipalidad distrital de Capacmarca",
+      "Municipalidad provincial de Tambobamba",
+      "Municipalidad distrital de Coyllurqui",
+      "Municipalidad distrital de Haquira",
+      "Municipalidad distrital de Cotabambas",
+    ],
+    tipoConsulta: [
+      "Asistencia técnica",
+      "Consulta",
+      "Capacitación",
+      "Reunión de coordinación",
+    ],
+    tematica: [
+      "Procedimiento de selección",
+      "Liquidación de obra",
+      "Ejecución física de obra",
+      "Requerimiento",
+    ],
   };
 
   const handleChange = (name: string, value: string) => {
@@ -198,19 +221,26 @@ const UserFormScreen = () => {
           Complete la información para procesar su solicitud.
         </Text>
         <View style={styles.formCard}>
+          <SelectField
+            label="Entidad"
+            icon="briefcase-outline"
+            name="entidad"
+            value={formData.entidad}
+            openSelector={openSelector}
+          />
           <InputField
-            label="Nombres"
+            label="Nombres y apellidos"
             icon="person-outline"
             name="nombres"
             placeholder="Nombres"
             formData={formData}
             handleChange={handleChange}
           />
-          <InputField
-            label="Apellidos"
+         <InputField
+            label="Cargo"
             icon="person-outline"
-            name="apellidos"
-            placeholder="Apellidos"
+            name="cargo"
+            placeholder="Escriba su cargo"
             formData={formData}
             handleChange={handleChange}
           />
@@ -238,39 +268,40 @@ const UserFormScreen = () => {
             handleChange={handleChange}
             keyboardType="numeric"
           />
+
           <SelectField
-            label="Área"
+            label="Codigo Único de Inversión (CUI)"
+            icon="business-outline"
+            name="cui"
+            value={formData.area}
+            openSelector={openSelector}
+          />
+          <SelectField
+            label="Temática"
             icon="business-outline"
             name="area"
             value={formData.area}
             openSelector={openSelector}
           />
           <SelectField
-            label="Entidad"
-            icon="briefcase-outline"
-            name="entidad"
-            value={formData.entidad}
-            openSelector={openSelector}
-          />
-          <SelectField
-            label="Tipo de Consulta"
+            label="Tipo de actividad"
             icon="help-circle-outline"
             name="tipoConsulta"
             value={formData.tipoConsulta}
             openSelector={openSelector}
           />
           <SelectField
-            label="Temática"
+            label="Tema específico"
             icon="list-outline"
             name="tematica"
             value={formData.tematica}
             openSelector={openSelector}
           />
           <InputField
-            label="Descripción de la Consulta"
+            label="Descripción solicitud"
             icon="document-text-outline"
             name="descripcion"
-            placeholder="Detalle su consulta aquí..."
+            placeholder="Detalle su solicitud aquí..."
             multiline={true}
             formData={formData}
             handleChange={handleChange}
@@ -286,7 +317,7 @@ const UserFormScreen = () => {
             {apiLoading ? (
               <ActivityIndicator color={Colors.white} />
             ) : (
-              <Text style={styles.submitText}>Enviar Formulario</Text>
+              <Text style={styles.submitText}>Enviar solicitud</Text>
             )}
           </TouchableOpacity>
         </View>
