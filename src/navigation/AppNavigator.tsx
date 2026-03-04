@@ -109,7 +109,7 @@ const AdminStack = () => {
 
   const handleConfirmLogout = () => {
     Alert.alert(
-      "Cerrar Sesión",
+      "Cerrar sesión",
       "¿Está seguro que desea salir del panel de administración?",
       [
         {
