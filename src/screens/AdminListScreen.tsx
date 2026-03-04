@@ -14,7 +14,7 @@ import { useNavigation } from "@react-navigation/native";
 import Colors from "../constants/Colors";
 import { useAppointments } from "../hooks/useAppointments";
 
-const AREAS = ["Todos", "Sistemas", "Electronica", "Arquitectura", "Recursos Humanos"];
+const AREAS = ["Todos","Contrataciones", "Invierte", "Ejecución", "Presupuesto"];
 
 const AdminListScreen = () => {
   const navigation = useNavigation<any>();
